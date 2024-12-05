@@ -46,7 +46,7 @@ A decentralized application for secure data sharing using blockchain and encrypt
 ## Usage
 
 1. Open the application in your browser.
-2. Connect your Ethereum wallet.
+2. Connect your Ethereum wallet.(will be available in the future)(only be able to be done in intranet)
 3. Use the interface to encrypt and share data securely.
 
 ## Contributing
