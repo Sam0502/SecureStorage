@@ -36,11 +36,13 @@ A decentralized application for secure data sharing using blockchain and encrypt
     ```
 4. Deploy the smart contracts:
     ```bash
-    npx hardhat run scripts/deploy.js --network <network-name>
+    npx hardhat run interactive/deploy.js --network <network-name>
     ```
-5. Start the development server:
+5. Always rember to update the contact address in index.js
+
+6. Start the development server:
     ```bash
-    npm start
+    python -m http.server
     ```
 
 ## Usage

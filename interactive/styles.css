@@ -1,0 +1,175 @@
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #e0f7fa;
+}
+
+.container {
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 450px;
+}
+
+h2 {
+    color: #00796b;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #b2dfdb;
+    border-radius: 4px;
+}
+
+.form-group button {
+    width: 100%;
+    padding: 10px;
+    background-color: #00796b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-group button:hover {
+    background-color: #004d40;
+}
+
+.audit-results {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #e0f2f1;
+    border: 1px solid #b2dfdb;
+    border-radius: 5px;
+}
+
+.audit-results h3 {
+    color: #00796b;
+    font-size: 16px;
+}
+
+.audit-results pre {
+    overflow-x: auto;
+}
+
+.transaction {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.transaction-header {
+    background-color: #f5f5f5;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-content {
+    padding: 10px;
+    display: none;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.transaction.active .transaction-content {
+    display: block;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.transaction.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-section {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    padding: 20px;
+    z-index: 100;
+    border-bottom: 1px solid #ddd;
+}
+
+.audit-section {
+    max-height: 60vh;
+    overflow-y: auto;
+    background-color: #e0f7fa;
+    padding: 20px;
+    border: 1px solid #b2dfdb;
+    border-radius: 10px;
+}
+
+.transaction {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.transaction-header {
+    background-color: #f5f5f5;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.transaction-header:hover {
+    background-color: #e0f2f1;
+}
+
+.transaction-content {
+    padding: 10px;
+    background-color: #ffffff;
+    display: none;
+}
+
+.transaction.active .transaction-content {
+    display: block;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.transaction.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
