@@ -86,32 +86,34 @@
     async function encryptAndShareData() {
         const data = document.getElementById('data').value;
         const receiver = document.getElementById('receiver').value;
-
+    
         if (!data || !receiver) {
             alert('Please enter both data and receiver address.');
             return;
         }
-
+    
+        if (!activeAccount) {
+            alert('Please log in first.');
+            return;
+        }
+    
         // Generate key pairs (for demonstration)
         const { publicKey, privateKey } = await generateKeyPair();
-
+    
         // Encrypt data
         const encryptedData = await encryptData(data, publicKey);
         console.log("Encrypted:", encryptedData);
-
+    
         // Share encrypted data
         try {
-            const accounts = await web3.eth.getAccounts();
-            const sender = accounts[0];
-            console.log("Sender:", sender);
-
-            await contract.methods.shareData(receiver, encryptedData).send({ from: sender });
+            await contract.methods.shareData(receiver, encryptedData).send({ from: activeAccount });
             alert('Data shared successfully.');
         } catch (error) {
             console.error("Error sharing data:", error);
             alert('Failed to share data.');
         }
     }
+    
 
             // Update auditTransactions function to include proper event handling
     async function auditTransactions() {
@@ -120,13 +122,18 @@
             const resultsContainer = document.getElementById('audit-results');
             resultsContainer.innerHTML = '';
     
+            if (transactions.length === 0) {
+                resultsContainer.innerHTML = "<p>No transactions found.</p>";
+                return;
+            }
+    
             transactions.forEach((tx, index) => {
                 const timestamp = Number(tx.timestamp);
                 const date = new Date(timestamp * 1000).toLocaleString();
-                
+    
                 const transactionElement = document.createElement('div');
                 transactionElement.className = 'transaction';
-                
+    
                 transactionElement.innerHTML = `
                     <div class="transaction-header">
                         <span>Transaction ${index + 1} - ${date}</span>
@@ -139,20 +146,20 @@
                         <div>Encrypted Data: ${tx.encryptedData}</div>
                     </div>
                 `;
-                
-                // Add click event listener directly to the header
+    
                 const header = transactionElement.querySelector('.transaction-header');
                 header.addEventListener('click', () => {
                     transactionElement.classList.toggle('active');
                 });
-                
+    
                 resultsContainer.appendChild(transactionElement);
             });
         } catch (error) {
             console.error("Error auditing transactions:", error);
-            alert('Failed to audit transactions.');
+            alert('Failed to audit transactions. See console for details.');
         }
     }
+            
 
     // Debugging: Check if the contract is deployed correctly
     async function checkContract() {
@@ -178,5 +185,53 @@
         }
     }
 
+    async function fetchAccount() {
+        const accounts = await web3.eth.getAccounts();
+        const accountDropdown = document.getElementById('account');
+
+        accounts.forEach((account) =>{
+            const option = document.createElement('option');
+            option.value = account;
+            option.textContent = account;
+            accountDropdown.appendChild(option);
+        })
+    }
+    
+    let activeAccount;
+
+    async function login() {
+        const accountDropdown = document.getElementById("account");
+        activeAccount = accountDropdown.value;
+
+        if (!activeAccount) {
+            alert("Please select an account to log in.");
+            return;
+        }
+
+        console.log(`Logged in as: ${activeAccount}`);
+        alert(`Logged in as: ${activeAccount}`);
+    }
+    async function sendTransaction(method) {
+        try {
+            const tx = await method.send({ from: activeAccount });
+            alert("Transaction sent successfully!");
+            console.log("Transaction Hash:", tx.transactionHash);
+        } catch (error) {
+            console.error("Transaction failed:", error);
+            alert("Transaction failed. See console for details.");
+        }
+    }
+
+    
+
+    // Expose functions globally
+    // window.login = login;
+    // window.encryptAndShareData = encryptAndShareData;
+    // window.auditTransactions = auditTransactions;
+
+
     // Call the checkContract function on page load
-    window.onload = checkContract;
+    window.onload = async () => {
+        await checkContract();
+        await fetchAccount();
+    }
