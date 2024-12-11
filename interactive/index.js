@@ -1,6 +1,6 @@
 
     const web3 = new Web3("http://localhost:8545"); // Replace with your Ethereum node URL
-    const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // Replace with your deployed contract address
+    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with your deployed contract address
     const contractABI = [ 
         {
             "inputs": [],
@@ -256,13 +256,12 @@
                         <div>Sender: ${tx.sender}</div>
                         <div>Receiver: ${tx.receiver}</div>
                         <div>Timestamp: ${date}</div>
-                        <div>Encrypted Data: ${tx.encryptedData}</div>
                     </div>
                 `;
     
                 const header = transactionElement.querySelector('.transaction-header');
                 header.addEventListener('click', () => {
-                    transactionElement.classList.toggle('active');
+                    toggleTransaction(index);
                 });
     
                 resultsContainer.appendChild(transactionElement);
@@ -312,45 +311,45 @@
     
         
 
-        function isValidBase64(str) {
-            try {
-                atob(str);
-                return true;
-            } catch (error) {
-                return false;
-            }
+    function isValidBase64(str) {
+        try {
+            atob(str);
+            return true;
+        } catch (error) {
+            return false;
         }
+    }
         
-        async function viewMessage() {
-            try {
-                if (!activeAccount) {
-                    alert("Please log in first.");
-                    return;
-                }
-        
-                // Retrieve transactions
-                const transactions = await contract.methods.getTransactions().call();
-                const myMessages = transactions.filter(
-                    (tx) => tx.receiver.toLowerCase() === activeAccount.toLowerCase()
-                );
-        
-                if (myMessages.length === 0) {
-                    alert("No messages found for your account.");
-                    return;
-                }
-        
-                for (const tx of myMessages) {
-                    const decryptedData = await decryptMessage(tx.encryptedData);
-                    console.log("Decrypted Message:", decryptedData);
-        
-                    // Display the message
-                    const resultsContainer = document.getElementById("decrypted-data");
-                    resultsContainer.innerHTML += `<p>Decrypted Message: ${decryptedData}</p>`;
-                }
-            } catch (error) {
-                console.error("Error viewing messages:", error);
+    async function viewMessage() {
+        try {
+            if (!activeAccount) {
+                alert("Please log in first.");
+                return;
             }
+    
+            // Retrieve transactions
+            const transactions = await contract.methods.getTransactions().call();
+            const myMessages = transactions.filter(
+                (tx) => tx.receiver.toLowerCase() === activeAccount.toLowerCase()
+            );
+    
+            if (myMessages.length === 0) {
+                alert("No messages found for your account.");
+                return;
+            }
+    
+            for (const tx of myMessages) {
+                const decryptedData = await decryptMessage(tx.encryptedData);
+                console.log("Decrypted Message:", decryptedData);
+    
+                // Display the message
+                const resultsContainer = document.getElementById("decrypted-data");
+                resultsContainer.innerHTML += `<p>Decrypted Message: ${decryptedData}</p>`;
+            }
+        } catch (error) {
+            console.error("Error viewing messages:", error);
         }
+    }
         
     // Debugging: Check if the contract is deployed correctly
     async function checkContract() {
@@ -371,11 +370,20 @@
     // Fix the toggleTransaction function
     function toggleTransaction(index) {
         const transactions = document.querySelectorAll('.transaction');
-        if (transactions[index]) {
-            transactions[index].classList.toggle('active');
+        const transaction = transactions[index];
+        
+        if (transaction) {
+            // Remove active class from all other transactions
+            transactions.forEach((tx, idx) => {
+                if (idx !== index && tx.classList.contains('active')) {
+                    tx.classList.remove('active');
+                }
+            });
+            
+            // Toggle the clicked transaction
+            transaction.classList.toggle('active');
         }
     }
-
     async function fetchAccount() {
         const accounts = await web3.eth.getAccounts();
         const accountDropdown = document.getElementById('account');
