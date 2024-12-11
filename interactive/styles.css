@@ -1,175 +1,208 @@
-
+/* Base styles */
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #e0f7fa;
+    background: linear-gradient(to bottom right, #2193b0, #6dd5ed);
+    color: #333;
 }
 
 .container {
-    padding: 30px;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 450px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-h2 {
-    color: #00796b;
+h1, h2 {
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1a73e8;
     text-align: center;
+}
+
+/* Login section */
+.login {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #ece9e6, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+select#account {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Form styling */
+.form-section {
+    margin-bottom: 40px;
 }
 
 .form-group {
     margin-bottom: 20px;
 }
 
-.form-group label {
+label {
     display: block;
-    margin-bottom: 5px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 8px;
     margin-bottom: 8px;
-    border: 1px solid #b2dfdb;
-    border-radius: 4px;
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
-.form-group button {
+input[type="text"] {
     width: 100%;
-    padding: 10px;
-    background-color: #00796b;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.form-group button:hover {
-    background-color: #004d40;
-}
-
-.audit-results {
-    margin-top: 30px;
-    padding: 15px;
-    background-color: #e0f2f1;
-    border: 1px solid #b2dfdb;
-    border-radius: 5px;
-}
-
-.audit-results h3 {
-    color: #00796b;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     font-size: 16px;
+    background: #fdfdfd;
+    transition: border 0.3s ease;
 }
 
-.audit-results pre {
-    overflow-x: auto;
+input[type="text"]:focus {
+    border-color: #1a73e8;
+    outline: none;
+    box-shadow: 0 0 4px rgba(26, 115, 232, 0.2);
 }
 
-.transaction {
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.transaction-header {
-    background-color: #f5f5f5;
-    padding: 10px;
+button {
+    display: inline-block;
+    background-color: #1a73e8;
+    color: #fff;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: transform 0.2s, background-color 0.3s;
 }
 
-.transaction-content {
-    padding: 10px;
-    display: none;
-    transition: all 0.3s ease;
-    background-color: #fff;
+button:hover {
+    background-color: #155dbb;
+    transform: translateY(-2px);
 }
 
-.transaction.active .transaction-content {
+button:active {
+    transform: translateY(0);
+}
+
+/* View message button */
+.view-message-button {
     display: block;
+    width: fit-content;
+    margin: 20px auto;
+    background-color: #4caf50;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s;
 }
 
-.toggle-icon {
-    transition: transform 0.3s ease;
+.view-message-button:hover {
+    background-color: #43a047;
 }
 
-.transaction.active .toggle-icon {
-    transform: rotate(180deg);
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.form-section {
-    position: sticky;
-    top: 0;
-    background-color: #fff;
-    padding: 20px;
-    z-index: 100;
-    border-bottom: 1px solid #ddd;
-}
-
+/* Audit section */
 .audit-section {
-    max-height: 60vh;
-    overflow-y: auto;
-    background-color: #e0f7fa;
+    background-color: #fdfdfd;
     padding: 20px;
-    border: 1px solid #b2dfdb;
-    border-radius: 10px;
-}
-
-.transaction {
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Transaction styles */
 .transaction-header {
-    background-color: #f5f5f5;
-    padding: 12px;
+    background-color: #f4f8fb;
+    padding: 15px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    border: 1px solid #e0e6ed;
+    transition: background-color 0.3s;
 }
 
 .transaction-header:hover {
-    background-color: #e0f2f1;
+    background-color: #e3f2fd;
 }
 
 .transaction-content {
-    padding: 10px;
-    background-color: #ffffff;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 6px;
+    margin-top: -5px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    h1, h2 {
+        font-size: 20px;
+    }
+
+    .view-message-button {
+        width: 100%;
+    }
+}
+
+/* Add these styles to your styles.css */
+.transaction-content {
     display: none;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 0 0 6px 6px;
+    margin-top: -1px;
+}
+
+.transaction .toggle-icon {
+    transition: transform 0.3s ease;
 }
 
 .transaction.active .transaction-content {
     display: block;
 }
 
-.toggle-icon {
-    transition: transform 0.3s ease;
-}
-
 .transaction.active .toggle-icon {
     transform: rotate(180deg);
 }
 
+.transaction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
