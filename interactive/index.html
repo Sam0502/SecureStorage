@@ -9,7 +9,14 @@
 <!-- Add to the head section of index.html -->
 <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
 <body>
-    <div class="container">
+ 
+        <div class="container">
+            <h2>Login</h2>
+                <label for="account">Select Account:</label>
+                <select id="account">
+                    <option value="" disabled selected>Select your account</option>
+                </select>
+                <button onclick="login()">Login</button>
         <div class="form-section">
             <h2>Secure Storage</h2>
             <div class="form-group">
@@ -33,7 +40,12 @@
             <div id="audit-results"></div>
         </div>
     </div>
+    <div>
+        <h2>Your message</h2>
+        <div id="decrypted-data">
+        <button onclick="viewMessage()">View Message</button>   
+    </div>
+    </div>
     <script src="index.js"></script>
-    
 </body>
 </html>
