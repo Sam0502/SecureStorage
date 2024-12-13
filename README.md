@@ -39,8 +39,10 @@ A decentralized application for secure data sharing using blockchain and encrypt
     npx hardhat run interactive/deploy.js --network <network-name>
     ```
 5. Always rember to update the contact address in index.js
+6. Remember to setup IPFS(Go-based) web database in order to use the share file function
+   Learn more: https://docs.ipfs.tech/install/command-line/#determining-which-node-to-use-with-the-command-line
 
-6. Start the development server:
+8. Start the development server:
     ```bash
     python -m http.server
     ```
