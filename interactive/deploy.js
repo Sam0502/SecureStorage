@@ -1,3 +1,7 @@
+//Deploy script to check on whcih network the contract is being deployed
+// Important to check the network and update in index.js before deploying the contract
+
+
 async function main() {
     try {
         // Get the deployer's signer account
