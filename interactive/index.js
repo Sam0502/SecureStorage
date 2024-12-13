@@ -1,3 +1,5 @@
+    let activeAccount;
+    let privateKey;
 
     const web3 = new Web3("http://localhost:8545"); // Replace with your Ethereum node URL
     const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with your deployed contract address
@@ -132,7 +134,7 @@
             "type": "function"
         }
     ];
-    
+
     const contract = new web3.eth.Contract(contractABI, contractAddress);
 
     async function generateKeyPair() {
@@ -226,9 +228,36 @@
             alert('Failed to store public key.');   
         }
     }
-    
+
 
             // Update auditTransactions function to include proper event handling
+    function toggleTransaction(index) {
+        const transaction = document.querySelector(`.transaction[data-index="${index}"]`);
+        if (!transaction) return;
+    
+        const content = transaction.querySelector('.transaction-content');
+        const icon = transaction.querySelector('.toggle-icon');
+        
+        // Close all other open transactions
+        document.querySelectorAll('.transaction').forEach(tx => {
+            if (tx !== transaction && tx.classList.contains('active')) {
+                tx.classList.remove('active');
+                tx.querySelector('.transaction-content').style.maxHeight = '0px';
+                tx.querySelector('.toggle-icon').textContent = '▼';
+            }
+        });
+    
+        // Toggle current transaction
+        transaction.classList.toggle('active');
+        if (transaction.classList.contains('active')) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            icon.textContent = '▲';
+        } else {
+            content.style.maxHeight = '0px';
+            icon.textContent = '▼';
+        }
+    }
+    
     async function auditTransactions() {
         try {
             const transactions = await contract.methods.getTransactions().call();
@@ -246,6 +275,7 @@
     
                 const transactionElement = document.createElement('div');
                 transactionElement.className = 'transaction';
+                transactionElement.setAttribute('data-index', index);
     
                 transactionElement.innerHTML = `
                     <div class="transaction-header">
@@ -259,8 +289,7 @@
                     </div>
                 `;
     
-                const header = transactionElement.querySelector('.transaction-header');
-                header.addEventListener('click', () => {
+                transactionElement.querySelector('.transaction-header').addEventListener('click', () => {
                     toggleTransaction(index);
                 });
     
@@ -271,15 +300,14 @@
             alert('Failed to audit transactions. See console for details.');
         }
     }
-
     async function decryptMessage(encryptedData) {
         try {
             if (!activeAccount) {
                 alert("Please log in first.");
-                return;
+return;
             }
-    
-            // Retrieve the private key from localStorage
+            
+// Retrieve the private key from localStorage
             if (!(privateKey instanceof CryptoKey)) {
                 const privateKeyBuffer = Uint8Array.from(
                     atob(localStorage.getItem(`privateKey_${activeAccount}`)),
@@ -292,25 +320,23 @@
                     true,
                     ["decrypt"]
                 );
-            }
+                            }
     
-            // Decode the encrypted data
+// Decode the encrypted data
             const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) => c.charCodeAt(0));
-            const decryptedData = await window.crypto.subtle.decrypt(
+                        const decryptedData = await window.crypto.subtle.decrypt(
                 { name: "RSA-OAEP" },
                 privateKey,
                 encryptedBytes
             );
     
             return new TextDecoder().decode(decryptedData);
-        } catch (error) {
+                    } catch (error) {
             console.error("Error decrypting message:", error);
             alert("Failed to decrypt message.");
         }
     }
-    
         
-
     function isValidBase64(str) {
         try {
             atob(str);
@@ -326,8 +352,7 @@
                 alert("Please log in first.");
                 return;
             }
-    
-            // Retrieve transactions
+
             const transactions = await contract.methods.getTransactions().call();
             const myMessages = transactions.filter(
                 (tx) => tx.receiver.toLowerCase() === activeAccount.toLowerCase()
@@ -337,21 +362,27 @@
                 alert("No messages found for your account.");
                 return;
             }
-    
+                
             for (const tx of myMessages) {
-                const decryptedData = await decryptMessage(tx.encryptedData);
-                console.log("Decrypted Message:", decryptedData);
-    
-                // Display the message
-                const resultsContainer = document.getElementById("decrypted-data");
-                resultsContainer.innerHTML += `<p>Decrypted Message: ${decryptedData}</p>`;
+                if (!tx.encryptedData.startsWith("Qm") && !tx.encryptedData.startsWith("bafy")) {
+                    const decryptedData = await decryptMessage(tx.encryptedData);
+                    console.log("Decrypted Message:", decryptedData);
+
+                    // Display the message
+                    const resultsContainer = document.getElementById("decrypted-data");
+                    resultsContainer.innerHTML += `<p>Decrypted Message: ${decryptedData}</p>
+                                                    <p>Sender: ${tx.sender}</p>`;
+                } else {
+                    console.log("Skipping CID:", tx.encryptedData);
+                    continue;
+                }
             }
         } catch (error) {
             console.error("Error viewing messages:", error);
+            alert("Failed to view messages. See console for details.");
         }
     }
-        
-    // Debugging: Check if the contract is deployed correctly
+
     async function checkContract() {
         try {
             const code = await web3.eth.getCode(contractAddress);
@@ -366,24 +397,9 @@
             console.error("Error checking contract:", error);
             alert("Failed to check contract deployment.");
         }
+    
     }
-    // Fix the toggleTransaction function
-    function toggleTransaction(index) {
-        const transactions = document.querySelectorAll('.transaction');
-        const transaction = transactions[index];
-        
-        if (transaction) {
-            // Remove active class from all other transactions
-            transactions.forEach((tx, idx) => {
-                if (idx !== index && tx.classList.contains('active')) {
-                    tx.classList.remove('active');
-                }
-            });
-            
-            // Toggle the clicked transaction
-            transaction.classList.toggle('active');
-        }
-    }
+    
     async function fetchAccount() {
         const accounts = await web3.eth.getAccounts();
         const accountDropdown = document.getElementById('account');
@@ -395,9 +411,7 @@
             accountDropdown.appendChild(option);
         })
     }
-    
-    let activeAccount;
-    let privateKey;
+
 
     async function login() {
         const accountDropdown = document.getElementById("account");
@@ -439,11 +453,8 @@
         }
     
         console.log(`Logged in as: ${activeAccount}`);
-    }
-    
-
-    
-    
+    } 
+      
     async function sendTransaction(method) {
         try {
             const tx = await method.send({ from: activeAccount });
@@ -454,8 +465,233 @@
             alert("Transaction failed. See console for details.");
         }
     }
+
+    async function encryptAndUploadFile(file, publicKey) {
+
+        try {
+            const aesKey = await window.crypto.subtle.generateKey(
+                { name: "AES-GCM", length: 256 },
+                true,
+                ["encrypt", "decrypt"]
+            );
+    
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const fileData = await file.arrayBuffer();
+    
+            const encryptedFile = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv },
+                aesKey,
+                fileData
+            );
+    
+            const exportedKey = await window.crypto.subtle.exportKey("raw", aesKey);
+            const encryptedKey = await window.crypto.subtle.encrypt(
+                { name: "RSA-OAEP" },
+                publicKey,
+                exportedKey
+            );
+    
+            const metadata = {
+                fileName: file.name,
+                type: file.type,
+                iv: Array.from(iv),
+                encryptedKey: Array.from(new Uint8Array(encryptedKey))
+            };
+    
+            const metadataBlob = new Blob([JSON.stringify(metadata)]);
+            const encryptedFileBlob = new Blob([new Uint8Array(encryptedFile)]);
+            const finalBlob = new Blob([metadataBlob, encryptedFileBlob]);
+    
+            console.log("Metadata Size:", metadataBlob.size);
+            console.log("Encrypted File Size:", encryptedFileBlob.size);
+            console.log("Final Blob Size:", finalBlob.size);
+    
+            const formData = new FormData();
+            formData.append("file", finalBlob);
+    
+            const response = await fetch("http://localhost:5001/api/v0/add", {
+                method: "POST",
+                body: formData
+            });
+    
+            const data = await response.json();
+            console.log("IPFS Data:", data.Hash);
+            return data.Hash;
+        } catch (error) {
+            console.error("Encryption error:", error);
+            throw error;
+        }
+    }
     
     
+    async function downloadAndDecryptFile(cid) {
+        try {
+            console.log ("CID:", cid);
+            const response = await fetch(`http://localhost:5001/api/v0/cat?arg=${cid}`, { method: "POST" });
+            if (!response.ok) throw new Error("Failed to fetch file from IPFS");
+    
+            const encryptedData = await response.arrayBuffer();
+            const dataView = new Uint8Array(encryptedData);
+    
+            console.log("Total Data Size (from IPFS):", dataView.length);
+            console.log("DataView Slice (0 to 100):", dataView.slice(0, 100));
+    
+            let metadataEndIndex = -1;
+            for (let i = 0; i < dataView.length; i++) {
+                if (dataView[i] === 125) { // '}'
+                    try {
+                        const testMetadata = new TextDecoder().decode(dataView.slice(0, i + 1));
+                        JSON.parse(testMetadata);
+                        metadataEndIndex = i + 1;
+                        break;
+                    } catch (e) {
+                        continue;
+                    }
+                }
+            }
+    
+            if (metadataEndIndex === -1) throw new Error("Invalid file format: Metadata not found.");
+    
+            const metadataText = new TextDecoder().decode(dataView.slice(0, metadataEndIndex));
+            const metadata = JSON.parse(metadataText);
+            console.log("Parsed Metadata:", metadata);
+    
+            const encryptedContent = dataView.slice(metadataEndIndex);
+            console.log("Encrypted Content Size:", encryptedContent.length);
+    
+            if (encryptedContent.length === 0) throw new Error("Encrypted content is too small.");
+    
+            // Decrypt AES key
+            const privateKeyBase64 = localStorage.getItem(`privateKey_${activeAccount}`);
+            const privateKeyBuffer = Uint8Array.from(atob(privateKeyBase64), c => c.charCodeAt(0));
+            const privateKey = await window.crypto.subtle.importKey(
+                "pkcs8",
+                privateKeyBuffer.buffer,
+                { name: "RSA-OAEP", hash: "SHA-256" },
+                true,
+                ["decrypt"]
+            );
+    
+            const decryptedKeyBuffer = await window.crypto.subtle.decrypt(
+                { name: "RSA-OAEP" },
+                privateKey,
+                new Uint8Array(metadata.encryptedKey).buffer
+            );
+    
+            const aesKey = await window.crypto.subtle.importKey(
+                "raw",
+                decryptedKeyBuffer,
+                { name: "AES-GCM" },
+                false,
+                ["decrypt"]
+            );
+    
+            const decryptedContent = await window.crypto.subtle.decrypt(
+                { name: "AES-GCM", iv: new Uint8Array(metadata.iv) },
+                aesKey,
+                encryptedContent
+            );
+    
+            const blob = new Blob([decryptedContent], { type: metadata.type || "application/octet-stream" });
+            const url = URL.createObjectURL(blob);
+    
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = metadata.fileName || "downloaded_file";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download and decrypt error:", error);
+            throw error;
+        }
+    }
+    
+    async function shareFile() {
+        const fileInput = document.getElementById("file");
+        const receiver = document.getElementById("receiver").value;
+    
+        if (!fileInput || !fileInput.files.length) {
+            alert("Please select a file.");
+            return;
+        }
+    
+        if (!receiver) {
+            alert("Please enter the receiver's address.");
+            return;
+        }
+    
+        try {
+            const file = fileInput.files[0];
+            const publicKeyBase64 = await contract.methods.getPublicKey(receiver).call();
+            const publicKeyBuffer = Uint8Array.from(atob(publicKeyBase64), (c) => c.charCodeAt(0));
+            const publicKey = await window.crypto.subtle.importKey(
+                "spki",
+                publicKeyBuffer.buffer,
+                { name: "RSA-OAEP", hash: "SHA-256" },
+                true,
+                ["encrypt"]
+            );
+    
+            const cid = await encryptAndUploadFile(file, publicKey);
+            await contract.methods.shareData(receiver, cid).send({ from: activeAccount });
+            alert("File shared successfully.");
+        } catch (error) {
+            console.error("Error sharing file:", error);
+            alert(`Failed to share file: ${error.message}`);
+        }
+    }
+    
+
+    async function receiveFile() {
+        try {
+            // Fetch all transactions
+            const transactions = await contract.methods.getTransactions().call();
+            console.log("All Transactions:", transactions);
+    
+            // Filter transactions where the receiver is the active account
+            const myTransactions = transactions.filter(
+                (tx) => tx.receiver.toLowerCase() === activeAccount.toLowerCase()
+            );
+    
+            if (myTransactions.length === 0) {
+                alert("No files shared with your account.");
+                return;
+            }
+    
+            // Process each transaction (example: download the first file)
+            for (const tx of myTransactions) {
+                console.log("Processing Transaction:", tx);
+    
+                const cid = tx.encryptedData; // CID from the transaction
+                console.log("Encrypted CID:", cid);
+    
+                // Decrypt and download the file
+                await downloadAndDecryptFile(cid, privateKey);
+            }
+        } catch (error) {
+            console.error("Error receiving file:", error);
+            alert("Failed to receive file. See console for details.");
+        }
+    }
+
+    
+    function getMimeType(fileName) {
+        const extension = fileName.split('.').pop().toLowerCase();
+        const mimeTypes = {
+            'pdf': 'application/pdf',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'doc': 'application/msword',
+            'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'txt': 'text/plain'
+        };
+        return mimeTypes[extension] || 'application/octet-stream';
+    }
+    
+
 
     // Expose functions globally
     // window.login = login;
